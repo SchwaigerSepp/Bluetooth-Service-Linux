@@ -20,9 +20,12 @@ def startRFCOMM():
 
 def handleInput():
     while True:
+        f = open("/home/pi/Downloads/test.txt","a")
+        f.write("\n\Reading Data")
         input = ser.readline()
+        f.write("\n\Read Data")
         print(input)
-        
+        f.close()
         try:
             json_object = json.loads(input)
             
@@ -32,16 +35,19 @@ def handleInput():
                 dist = str(x['dist'])
                 direction = str(x['dir'])
                 print (speed + time + dist + direction)
-                controlDisplay(speed,time,dist,direction)
+                f = open("/home/pi/Downloads/test.txt","a")
+                f.write("\n\Read Data")
+                f.close()
+                #controlDisplay(speed,time,dist,direction)
                 
         except (ValueError, KeyError, TypeError):
             f = open("/home/pi/Downloads/test.txt","a")
             f.write("\n\rError")
             f.close()
                 
-t = Thread(target = startRFCOMM)
+#t = Thread(target = startRFCOMM)
 t2 = Thread(target = handleInput)
-t.start()
+#t.start()
 
 while True:
     try:
@@ -51,9 +57,6 @@ while True:
             t2.start()
             break
     except:
-        f = open("/home/pi/Downloads/test.txt","a")
-        f.write("\n\rNot Yet Connected")
-        f.close()
         time.sleep(1)
         
 def controlDisplay(speed, time, dist, direct):
