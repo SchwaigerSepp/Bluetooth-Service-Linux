@@ -7,6 +7,8 @@ from lib_oled96 import ssd1306
 from smbus import SMBus
 from PIL import ImageFont
 
+
+
 def startRFCOMM():
     try:
         ser = serial.Serial("/dev/rfcomm0")
@@ -22,9 +24,11 @@ def handleInput():
     while True:
         f = open("/home/pi/Downloads/test.txt","a")
         f.write("\n\Reading Data")
+
         input = ser.readline()
+
         f.write("\n\Read Data")
-        print(input)
+        f.write(str(input))
         f.close()
         try:
             json_object = json.loads(input)
@@ -38,13 +42,24 @@ def handleInput():
                 f = open("/home/pi/Downloads/test.txt","a")
                 f.write("\n\Read Data")
                 f.close()
-                #controlDisplay(speed,time,dist,direction)
+                controlDisplay(speed,time,dist,direction)
                 
         except (ValueError, KeyError, TypeError):
             f = open("/home/pi/Downloads/test.txt","a")
             f.write("\n\rError")
             f.close()
                 
+global FreeSans12 
+FreeSans12 = ImageFont.truetype('FreeSans.ttf',12)
+global FreeSans20
+FreeSans20 = ImageFont.truetype('FreeSans.ttf',20)
+global i2cbus
+i2cbus = SMBus(1)            # 0 = Raspberry Pi 1, 1 = Raspberry Pi > 1
+global oled 
+oled = ssd1306(i2cbus)
+global draw 
+draw = oled.canvas
+oled.cls()
 #t = Thread(target = startRFCOMM)
 t2 = Thread(target = handleInput)
 #t.start()
@@ -54,6 +69,9 @@ while True:
         ser = serial.Serial("/dev/rfcomm0")
         if ser.isOpen():
             ser.write(b"Connected")
+            f = open("/home/pi/Downloads/test.txt","a")
+            f.write("\n\Connected")
+            f.close()
             t2.start()
             break
     except:
@@ -62,17 +80,17 @@ while True:
 def controlDisplay(speed, time, dist, direct):
     
     #define Fonts
-    FreeSans12 = ImageFont.truetype('FreeSans.ttf',12)
-    FreeSans20 = ImageFont.truetype('FreeSans.ttf',20)
+    #FreeSans12 = ImageFont.truetype('FreeSans.ttf',12)
+    #FreeSans20 = ImageFont.truetype('FreeSans.ttf',20)
     
     # Display einrichten
-    i2cbus = SMBus(1)            # 0 = Raspberry Pi 1, 1 = Raspberry Pi > 1
-    oled = ssd1306(i2cbus)
+    #i2cbus = SMBus(1)            # 0 = Raspberry Pi 1, 1 = Raspberry Pi > 1
+    #oled = ssd1306(i2cbus)
     
-    draw = oled.canvas
+    #draw = oled.canvas
     
-    oled.cls()
-    oled.display()
+    #oled.cls()
+    #oled.display()
     
     draw.text((75,40),time,font = FreeSans20,fill=1)
     
